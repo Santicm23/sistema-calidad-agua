@@ -2,9 +2,9 @@
 from ..constants.values import SensorValues
 
 
-def read_config_file(file: str) -> dict[str, float]:
+def read_config_file(file: str) -> dict[SensorValues, float]:
 
-    res: dict[str, float] = {}
+    res: dict[SensorValues, float] = {}
 
     lines: list[str] = []
 
@@ -20,7 +20,7 @@ def read_config_file(file: str) -> dict[str, float]:
         val = float(words[0])
         name = (' '.join(words[1:])).strip()
         try:
-            SensorValues(name)
+            name = SensorValues(name)
         except ValueError:
             raise ValueError(
                 f"Nombre '{name}' inválido en archivo de configuración")
@@ -31,13 +31,13 @@ def read_config_file(file: str) -> dict[str, float]:
 
         res[name] = val
 
-    if not SensorValues.VALORES_CORRECTOS.value in res:
+    if not SensorValues.VALORES_CORRECTOS in res:
         raise ValueError(
             f"Nombre '{SensorValues.VALORES_CORRECTOS.value}' no encontrado en archivo de configuración")
-    if not SensorValues.VALORES_FUERA_RANGO.value in res:
+    if not SensorValues.VALORES_FUERA_RANGO in res:
         raise ValueError(
             f"Nombre '{SensorValues.VALORES_FUERA_RANGO.value}' no encontrado en archivo de configuración")
-    if not SensorValues.ERRORES.value in res:
+    if not SensorValues.ERRORES in res:
         raise ValueError(
             f"Nombre '{SensorValues.ERRORES.value}' no encontrado en archivo de configuración")
 

@@ -1,6 +1,5 @@
 
 import time
-import json
 
 import zmq
 import signal
@@ -8,10 +7,11 @@ from argparse import Namespace
 
 from .constants.parsers import sensor_parser
 from .helpers.files import read_config_file
-from .constants.values import SensorType
+from .constants.values import SensorType, SensorValues
+from .helpers.operations import get_sensor_value
 
 
-def get_args(args: Namespace) -> tuple[str, int, dict[str, float]]:
+def get_args(args: Namespace) -> tuple[str, int, dict[SensorValues, float]]:
     tipo_sensor: str
 
     try:
@@ -25,10 +25,6 @@ def get_args(args: Namespace) -> tuple[str, int, dict[str, float]]:
     return tipo_sensor, tiempo, config
 
 
-def calcular_valor(config: dict[str, float]) -> float:
-    return 0.0
-
-
 def main() -> None:
     tipo_sensor, tiempo, config = get_args(sensor_parser.parse_args())
 
@@ -37,12 +33,11 @@ def main() -> None:
     context = zmq.Context()
     socket = context.socket(zmq.PUB)
     socket.bind('tcp://*:5555')
-
-    for _ in range(5):
-        socket.send(
-            bytes(f'{tipo_sensor} {tiempo} {json.dumps(config)}', 'utf-8'))
-        socket.send(b'All is well')
-        time.sleep(1)
+    
+    while True:
+        sensor_value = get_sensor_value(SensorType(tipo_sensor), config)
+        socket.send(bytes(f'{tipo_sensor} {sensor_value}', 'utf-8'))
+        time.sleep(tiempo)
 
 
 if __name__ == '__main__':
