@@ -1,0 +1,21 @@
+[tool.poetry]
+name = "sistema-calidad-agua"
+version = "0.1.0"
+description = ""
+authors = ["Santicm23 <santicastrom@outlook.com>"]
+readme = "README.md"
+packages = [{include = "sistema_calidad_agua"}]
+
+[tool.poetry.scripts]
+sensor = "sistema_calidad_agua.sensor:main"
+monitor = "sistema_calidad_agua.monitor:main"
+
+[tool.poetry.dependencies]
+python = "^3.11"
+pyzmq = "^25.1.1"
+argparse = "^1.4.0"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
