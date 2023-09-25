@@ -9,6 +9,7 @@ from .constants.parsers import sensor_parser
 from .helpers.files import read_config_file
 from .constants.values import SensorType, SensorValues
 from .helpers.operations import get_sensor_value
+from .constants.net import PROXY_SOCKET
 
 
 def get_args(args: Namespace) -> tuple[str, int, dict[SensorValues, float]]:
@@ -32,8 +33,8 @@ def main() -> None:
 
     context = zmq.Context()
     socket = context.socket(zmq.PUB)
-    socket.bind('tcp://*:5555')
-    
+    socket.connect(f'tcp://{PROXY_SOCKET["host"]}:{PROXY_SOCKET["backend_port"]}')
+
     while True:
         sensor_value = get_sensor_value(SensorType(tipo_sensor), config)
         socket.send(bytes(f'{tipo_sensor} {sensor_value}', 'utf-8'))
