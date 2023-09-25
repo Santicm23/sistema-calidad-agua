@@ -1,6 +1,7 @@
 
 import random
-from ..constants.values import SensorValues, SensorType, RANGES
+
+from ..constants import SensorValues, SensorType, RANGES
 
 
 def get_sensor_value(sensorType: SensorType, config: dict[SensorValues, float]) -> float:

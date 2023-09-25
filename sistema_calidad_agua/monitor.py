@@ -2,9 +2,7 @@
 import signal
 import zmq
 
-from .constants.parsers import monitor_parser
-from .constants.values import SensorType
-from .constants.net import PROXY_SOCKET
+from .constants import monitor_parser, SensorType, PROXY_SOCKET
 
 
 def main() -> None:
@@ -20,7 +18,8 @@ def main() -> None:
 
     context = zmq.Context()
     socket = context.socket(zmq.SUB)
-    socket.connect(f'tcp://{PROXY_SOCKET["host"]}:{PROXY_SOCKET["frontend_port"]}')
+    socket.connect(
+        f'tcp://{PROXY_SOCKET["host"]}:{PROXY_SOCKET["frontend_port"]}')
 
     socket.setsockopt(zmq.SUBSCRIBE, bytes(tipo_sensor, 'utf-8'))
 

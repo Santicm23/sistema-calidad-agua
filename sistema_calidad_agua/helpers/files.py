@@ -1,5 +1,5 @@
 
-from ..constants.values import SensorValues
+from ..constants import SensorValues
 
 
 def read_config_file(file: str) -> dict[SensorValues, float]:

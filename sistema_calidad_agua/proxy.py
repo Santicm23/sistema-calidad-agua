@@ -2,7 +2,7 @@
 import signal
 import zmq
 
-from .constants.net import PROXY_SOCKET
+from .constants import PROXY_SOCKET
 
 def main() -> None:
     signal.signal(signal.SIGINT, signal.SIG_DFL)
