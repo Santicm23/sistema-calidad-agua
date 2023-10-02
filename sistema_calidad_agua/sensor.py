@@ -2,7 +2,6 @@
 import time
 
 import zmq
-import signal
 from argparse import Namespace
 
 from .constants import sensor_parser, SensorType, SensorValues, PROXY_SOCKET
@@ -25,8 +24,6 @@ def get_args(args: Namespace) -> tuple[str, int, dict[SensorValues, float]]:
 
 def main() -> None:
     tipo_sensor, tiempo, config = get_args(sensor_parser.parse_args())
-
-    signal.signal(signal.SIGINT, signal.SIG_DFL)
 
     context = zmq.Context()
     socket = context.socket(zmq.PUB)

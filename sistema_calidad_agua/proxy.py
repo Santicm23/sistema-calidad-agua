@@ -1,11 +1,9 @@
 
-import signal
 import zmq
 
 from .constants import PROXY_SOCKET
 
 def main() -> None:
-    signal.signal(signal.SIGINT, signal.SIG_DFL)
 
     context = zmq.Context()
 

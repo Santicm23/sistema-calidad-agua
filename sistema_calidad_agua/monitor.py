@@ -1,5 +1,4 @@
 
-import signal
 import zmq
 
 from .constants import monitor_parser, SensorType, PROXY_SOCKET
@@ -13,8 +12,6 @@ def main() -> None:
         tipo_sensor = SensorType(args.tipo_sensor).value
     except ValueError:
         raise ValueError(f"Tipo de sensor '{args.tipo_sensor}' inválido")
-
-    signal.signal(signal.SIGINT, signal.SIG_DFL)
 
     context = zmq.Context()
     socket = context.socket(zmq.SUB)
