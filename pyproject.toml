@@ -10,6 +10,7 @@ packages = [{include = "sistema_calidad_agua"}]
 sensor = "sistema_calidad_agua.sensor:main"
 monitor = "sistema_calidad_agua.monitor:main"
 proxy = "sistema_calidad_agua.proxy:main"
+db_manager = "sistema_calidad_agua.db_manager:main"
 
 [tool.poetry.dependencies]
 python = "^3.11"

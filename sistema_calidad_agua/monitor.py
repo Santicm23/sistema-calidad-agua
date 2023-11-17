@@ -1,10 +1,10 @@
 
 import sys
+import time
 
 import zmq
 
-from .constants import monitor_parser, SensorType, PROXY_SOCKET
-from .helpers import write_valid_info
+from .constants import monitor_parser, SensorType, PROXY_SOCKET, DB_SOCKET
 
 
 def main() -> None:
@@ -18,18 +18,33 @@ def main() -> None:
         sys.exit(1)
 
     context = zmq.Context()
-    socket = context.socket(zmq.SUB)
-    socket.connect(
-        f'tcp://{PROXY_SOCKET["host"]}:{PROXY_SOCKET["frontend_port"]}')
 
-    socket.setsockopt(zmq.SUBSCRIBE, bytes(tipo_sensor.value, 'utf-8'))
+    socket_sensors = context.socket(zmq.SUB)
+    socket_sensors.connect(
+        f'tcp://{PROXY_SOCKET["host"]}:{PROXY_SOCKET["frontend_port"]}')
+    socket_sensors.setsockopt(zmq.SUBSCRIBE, bytes(tipo_sensor.value, 'utf-8'))
+
+    socket_db = context.socket(zmq.REQ)
+    socket_db.connect(
+        f'tcp://{DB_SOCKET["host"]}:{DB_SOCKET["port"]}')
 
     while True:
-        message = socket.recv_multipart()
+        message = socket_sensors.recv_multipart()
 
         value = float(message[0].decode('utf-8').split()[1])
-        
-        write_valid_info(tipo_sensor, value)
+
+        socket_db.send_json({
+            'type_sensor': tipo_sensor.value,
+            'value': value,
+            'timestamp': time.time()
+        })
+
+        response = socket_db.recv_json()
+
+        assert isinstance(response, dict)
+
+        if response['status'] != 'ok':
+            print(f'Error: {response["status"]}')
 
 
 if __name__ == '__main__':

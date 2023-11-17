@@ -23,3 +23,13 @@ SYSTEM_SOCKET: Socket = {
     'host': 'localhost', # TODO: Change this to the IP of the system server
     'port': 5557,
 }
+
+DB_SOCKET: Socket = {
+    'host': 'localhost', # TODO: Change this to the IP of the database server
+    'port': 5558,
+}
+
+HEALTH_CHECK_SOCKET: Socket = {
+    'host': 'localhost', # TODO: Change this to the IP of the health check server
+    'port': 5559,
+}
