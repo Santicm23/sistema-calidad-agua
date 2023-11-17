@@ -20,3 +20,9 @@ def get_sensor_value(sensorType: SensorType, config: dict[SensorValues, float]) 
             return random.uniform(max, max + min)
     else:
         return random.uniform(-min, 0)
+
+
+def is_in_range(sensorType: SensorType, value: float) -> bool:
+    min, max = RANGES[sensorType]
+
+    return min <= value <= max

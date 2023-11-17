@@ -8,6 +8,13 @@ import zmq
 from .constants import DB_PATH, DB_SOCKET
 
 
+def print_title() -> None:
+    print('----- Gestor de base de datos -----')
+    print(f'IP de la base de datos: {DB_SOCKET["host"]}')
+    print(f'Escuchando información en el puerto: {DB_SOCKET["port"]}')
+    print('--------------------------------------\n')
+
+
 def write_to_db(data: dict[str, Any]) -> None:
     '''Write data to database.'''
 
@@ -26,8 +33,7 @@ def write_valid_info(type_sensor: str, value: float, timestamp: float = time.tim
     '''Write valid data to database.'''
 
     if value < 0:
-        print(f'Se detectó un error: {value}')
-        return
+        raise ValueError(f'Valor inválido: {value}')
 
     data = read_from_db()
 
@@ -40,6 +46,8 @@ def write_valid_info(type_sensor: str, value: float, timestamp: float = time.tim
 
 
 def main() -> None:
+    print_title()
+
     context = zmq.Context()
     socket = context.socket(zmq.REP)
 
@@ -57,7 +65,7 @@ def main() -> None:
 
         except Exception as e:
             print(f'Error: {e}')
-            socket.send_json({'status': 'error'})
+            socket.send_json({'status': 'error', 'message': str(e)})
 
 
 
