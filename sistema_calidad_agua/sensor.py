@@ -1,4 +1,6 @@
 
+import sys
+
 import time
 
 import zmq
@@ -14,7 +16,8 @@ def get_args(args: Namespace) -> tuple[str, int, dict[SensorValues, float]]:
     try:
         tipo_sensor = SensorType(args.tipo_sensor).value
     except ValueError:
-        raise ValueError(f"Tipo de sensor '{args.tipo_sensor}' inválido")
+        print(f"Tipo de sensor '{args.tipo_sensor}' inválido")
+        sys.exit(1)
 
     tiempo: int = args.tiempo
     config = read_config_file(args.config)
