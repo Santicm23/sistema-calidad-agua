@@ -1,5 +1,8 @@
 
+import asyncio
+
 import zmq
+import zmq.asyncio
 
 from sistema_calidad_agua.constants import SYSTEM_SOCKET
 
@@ -11,20 +14,24 @@ def print_title() -> None:
     print('--------------------------------------\n')
 
 
-def main() -> None:
+async def run() -> None:
     print_title()
 
-    context = zmq.Context()
+    context = zmq.asyncio.Context()
     socket = context.socket(zmq.SUB)
 
     socket.bind(f'tcp://*:{SYSTEM_SOCKET["port"]}')
     socket.setsockopt(zmq.SUBSCRIBE, b'')
 
     while True:
-        message = socket.recv_multipart()
+        message = await socket.recv_multipart()
 
         print(f"Alerta recibida de {message[0].decode('utf-8')}")
         print(f"Mensaje: '{message[1].decode('utf-8')}'\n")
+
+
+def main() -> None:
+    asyncio.run(run())
 
 
 if __name__ == '__main__':

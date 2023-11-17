@@ -9,7 +9,7 @@ from .constants import DB_PATH, DB_SOCKET
 
 
 def print_title() -> None:
-    print('----- Gestor de base de datos -----')
+    print('------ Gestor de base de datos ------')
     print(f'IP de la base de datos: {DB_SOCKET["host"]}')
     print(f'Escuchando información en el puerto: {DB_SOCKET["port"]}')
     print('--------------------------------------\n')

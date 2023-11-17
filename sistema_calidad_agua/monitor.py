@@ -1,8 +1,10 @@
 
 import sys
 import time
+import asyncio
 
 import zmq
+import zmq.asyncio
 
 from .helpers import is_in_range
 
@@ -16,7 +18,7 @@ def print_title(sensor_type: SensorType) -> None:
     print('--------------------------------------\n')
 
 
-def main() -> None:
+async def run() -> None:
     args = monitor_parser.parse_args()
     tipo_sensor: SensorType
 
@@ -28,7 +30,7 @@ def main() -> None:
     
     print_title(tipo_sensor)
 
-    context = zmq.Context()
+    context = zmq.asyncio.Context()
 
     #* Comunicación con el proxy de sensores
     socket_sensors = context.socket(zmq.SUB)
@@ -47,7 +49,7 @@ def main() -> None:
         f'tcp://{SYSTEM_SOCKET["host"]}:{SYSTEM_SOCKET["port"]}')
 
     while True:
-        message = socket_sensors.recv_multipart()
+        message = await socket_sensors.recv_multipart()
 
         value = float(message[0].decode('utf-8').split()[1])
 
@@ -69,6 +71,10 @@ def main() -> None:
                 ])
         else:
             print(f'Error: {response["message"]}')
+
+
+def main() -> None:
+    asyncio.run(run())
 
 
 if __name__ == '__main__':

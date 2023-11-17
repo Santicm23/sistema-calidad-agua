@@ -1,9 +1,10 @@
 
 import sys
-
 import time
+import asyncio
 
 import zmq
+import zmq.asyncio
 from argparse import Namespace
 
 from .constants import sensor_parser, SensorType, SensorValues, PROXY_SOCKET
@@ -34,10 +35,10 @@ def get_args(args: Namespace) -> tuple[str, int, dict[SensorValues, float]]:
     return tipo_sensor.value, tiempo, config
 
 
-def main() -> None:
+async def run() -> None:
     tipo_sensor, tiempo, config = get_args(sensor_parser.parse_args())
 
-    context = zmq.Context()
+    context = zmq.asyncio.Context()
     socket = context.socket(zmq.PUB)
     socket.connect(
         f'tcp://{PROXY_SOCKET["host"]}:{PROXY_SOCKET["backend_port"]}')
@@ -47,6 +48,10 @@ def main() -> None:
         socket.send(bytes(f'{tipo_sensor} {sensor_value}', 'utf-8'))
         print(f'Enviando: {tipo_sensor} {sensor_value}')
         time.sleep(tiempo)
+
+
+def main() -> None:
+    asyncio.run(run())
 
 
 if __name__ == '__main__':

@@ -1,5 +1,8 @@
 
+import asyncio
+
 import zmq
+import zmq.asyncio
 
 from .constants import PROXY_SOCKET
 
@@ -12,9 +15,9 @@ def print_title() -> None:
     print('-------------------------------------\n')
 
 
-def main() -> None:
+async def run() -> None:
 
-    context = zmq.Context()
+    context = zmq.asyncio.Context()
 
     frontend_socket = context.socket(zmq.XPUB)
     frontend_socket.bind(f'tcp://*:{PROXY_SOCKET["frontend_port"]}')
@@ -29,6 +32,10 @@ def main() -> None:
     frontend_socket.close()
     backend_socket.close()
     context.term()
+
+
+def main() -> None:
+    asyncio.run(run())
 
 
 if __name__ == '__main__':
