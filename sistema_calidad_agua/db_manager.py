@@ -1,10 +1,14 @@
 
 import json
 import time
+import uuid
 from typing import Any
+import asyncio
 
 import zmq
+import zmq.asyncio
 
+from .helpers import auth
 from .constants import DB_PATH, DB_SOCKET
 
 
@@ -46,9 +50,14 @@ def write_valid_info(type_sensor: str, value: float, timestamp: float = time.tim
 
 
 def main() -> None:
+    _id = str(uuid.uuid4())
+
     print_title()
 
-    context = zmq.Context()
+    context = zmq.asyncio.Context()
+
+    auth(context, _id, 'db_manager')
+
     socket = context.socket(zmq.REP)
 
     socket.bind(f'tcp://*:{DB_SOCKET["port"]}')
@@ -66,7 +75,6 @@ def main() -> None:
         except Exception as e:
             print(f'Error: {e}')
             socket.send_json({'status': 'error', 'message': str(e)})
-
 
 
 if __name__ == '__main__':

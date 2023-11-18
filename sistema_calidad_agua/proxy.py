@@ -1,10 +1,12 @@
 
 import asyncio
+import uuid
 
 import zmq
 import zmq.asyncio
 
 from .constants import PROXY_SOCKET
+from .helpers import health_check, auth
 
 
 def print_title() -> None:
@@ -15,9 +17,12 @@ def print_title() -> None:
     print('-------------------------------------\n')
 
 
-async def run() -> None:
+def main() -> None:
+    _id = str(uuid.uuid4())
 
     context = zmq.asyncio.Context()
+
+    auth(context, _id, 'proxy')
 
     frontend_socket = context.socket(zmq.XPUB)
     frontend_socket.bind(f'tcp://*:{PROXY_SOCKET["frontend_port"]}')
@@ -27,15 +32,13 @@ async def run() -> None:
 
     print_title()
 
+    asyncio.create_task(health_check(context))
+
     zmq.proxy(frontend_socket, backend_socket)
 
     frontend_socket.close()
     backend_socket.close()
     context.term()
-
-
-def main() -> None:
-    asyncio.run(run())
 
 
 if __name__ == '__main__':

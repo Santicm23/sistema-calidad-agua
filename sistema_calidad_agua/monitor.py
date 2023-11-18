@@ -2,11 +2,12 @@
 import sys
 import time
 import asyncio
+import uuid
 
 import zmq
 import zmq.asyncio
 
-from .helpers import is_in_range
+from .helpers import is_in_range, auth
 
 from .constants import monitor_parser, SensorType, PROXY_SOCKET, DB_SOCKET, SYSTEM_SOCKET
 
@@ -21,6 +22,7 @@ def print_title(sensor_type: SensorType) -> None:
 async def run() -> None:
     args = monitor_parser.parse_args()
     tipo_sensor: SensorType
+    _id = str(uuid.uuid4())
 
     try:
         tipo_sensor = SensorType(args.tipo_sensor)
@@ -31,6 +33,8 @@ async def run() -> None:
     print_title(tipo_sensor)
 
     context = zmq.asyncio.Context()
+
+    auth(context, _id, 'monitor')
 
     #* Comunicación con el proxy de sensores
     socket_sensors = context.socket(zmq.SUB)
