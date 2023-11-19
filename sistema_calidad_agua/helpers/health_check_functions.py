@@ -15,14 +15,15 @@ async def auth(context: zmq.asyncio.Context, uuid: str, node_type: str, flags: O
     auth_socket.send_json({'id': uuid, 'type': node_type,
                           'req': 'auth', 'flags': flags})
     await auth_socket.recv()
+    print('Autenticación exitosa')
 
 
 async def health_check(context: zmq.asyncio.Context, uuid: str) -> None:
+    print('Escuchando health check')
     sub_socket = context.socket(zmq.SUB)
     sub_socket.connect(
         f'tcp://{HEALTH_CHECK_SOCKET["host"]}:{HEALTH_CHECK_SOCKET["port_health_check"]}')
     sub_socket.setsockopt(zmq.SUBSCRIBE, bytes('', 'utf-8'))
-
 
     while True:
         await sub_socket.recv()

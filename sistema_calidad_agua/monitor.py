@@ -4,6 +4,7 @@ import time
 import asyncio
 import uuid
 import warnings
+import json
 
 import zmq
 import zmq.asyncio
@@ -48,10 +49,6 @@ async def run() -> None:
         f'tcp://{PROXY_SOCKET["host"]}:{PROXY_SOCKET["frontend_port"]}')
     socket_sensors.setsockopt(zmq.SUBSCRIBE, bytes(tipo_sensor.value, 'utf-8'))
 
-    # * Comunicación con la base de datos
-    socket_db = context.socket(zmq.REQ)
-    socket_db.connect(
-        f'tcp://{DB_SOCKET["host"]}:{DB_SOCKET["port"]}')
 
     # * Comunicación con el sistema
     socket_system = context.socket(zmq.PUB)
@@ -62,25 +59,33 @@ async def run() -> None:
         message = await socket_sensors.recv_multipart()
 
         value = float(message[0].decode('utf-8').split()[1])
+        
+        # * Comunicación con la base de datos
+        socket_db = context.socket(zmq.REQ)
+        socket_db.connect(
+            f'tcp://{DB_SOCKET["host"]}:{DB_SOCKET["port"]}')
 
+        print(f'Enviando datos a la base de datos: {value} {tipo_sensor.value}')
         socket_db.send_json({
             'type_sensor': tipo_sensor.value,
             'value': value,
             'timestamp': time.time()
         })
 
-        response = socket_db.recv_json()
+        res = await socket_db.recv_multipart()
 
-        assert isinstance(response, dict)
+        json_obj = json.loads(res[0])
 
-        if response['status'] == 'ok':
+        assert isinstance(json_obj, dict)
+
+        if json_obj['status'] == 'ok':
             if not is_in_range(tipo_sensor, value):
                 socket_system.send_multipart([
                     bytes(tipo_sensor.value, 'utf-8'),
                     bytes(f'Valor fuera de rango: {value}', 'utf-8')
                 ])
         else:
-            print(f'Error: {response["message"]}')
+            print(f'Error: {json_obj["message"]}')
 
 
 def main() -> None:

@@ -69,13 +69,15 @@ async def run() -> None:
     socket.bind(f'tcp://*:{DB_SOCKET["port"]}')
 
     while True:
-        message = socket.recv_json()
+        res = await socket.recv_multipart()
+
+        json_obj = json.loads(res[0])
 
         try:
-            assert isinstance(message, dict)
+            assert isinstance(json_obj, dict)
 
-            write_valid_info(message['type_sensor'],
-                             message['value'], message['timestamp'])
+            write_valid_info(json_obj['type_sensor'],
+                             json_obj['value'], json_obj['timestamp'])
 
             socket.send_json({'status': 'ok'})
 
