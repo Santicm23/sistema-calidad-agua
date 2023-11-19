@@ -1,6 +1,6 @@
 
-import os
-import sys
+import subprocess
+import threading
 import asyncio
 from typing import Optional, Any
 import json
@@ -69,7 +69,7 @@ def create_node(node_type: str, flags: Optional[dict[str, str]] = None) -> None:
         for flag, value in flags.items():
             command += f' {flag} {value}'
     
-    os.system(command)
+    threading.Thread(target=lambda: subprocess.run(command)).start()
 
 
 async def run() -> None:
