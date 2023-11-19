@@ -13,6 +13,12 @@ ProxySocket = TypedDict('ProxySocket', {
     'backend_port': int,
 })
 
+HealthCheckSocket = TypedDict('HealthCheckSocket', {
+    'host': str,
+    'port_res': int,
+    'port_health_check': int,
+})
+
 PROXY_SOCKET: ProxySocket = {
     'host': 'localhost', # TODO: Change this to the IP of the proxy server
     'frontend_port': 5555,
@@ -29,7 +35,8 @@ DB_SOCKET: Socket = {
     'port': 5558,
 }
 
-HEALTH_CHECK_SOCKET: Socket = {
+HEALTH_CHECK_SOCKET: HealthCheckSocket = {
     'host': 'localhost', # TODO: Change this to the IP of the health check server
-    'port': 5559,
+    'port_res': 5559,
+    'port_health_check': 5560,
 }

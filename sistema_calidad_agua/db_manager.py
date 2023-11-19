@@ -4,12 +4,16 @@ import time
 import uuid
 from typing import Any
 import asyncio
+import warnings
 
 import zmq
 import zmq.asyncio
 
-from .helpers import auth
+from .helpers import auth, health_check
 from .constants import DB_PATH, DB_SOCKET
+
+
+warnings.filterwarnings("ignore", category=RuntimeWarning, module="zmq.*")
 
 
 def print_title() -> None:
@@ -49,14 +53,16 @@ def write_valid_info(type_sensor: str, value: float, timestamp: float = time.tim
     write_to_db(data)
 
 
-def main() -> None:
+async def run() -> None:
     _id = str(uuid.uuid4())
 
     print_title()
 
     context = zmq.asyncio.Context()
 
-    auth(context, _id, 'db_manager')
+    await auth(context, _id, 'db_manager')
+
+    asyncio.create_task(health_check(context, _id))
 
     socket = context.socket(zmq.REP)
 
@@ -68,7 +74,8 @@ def main() -> None:
         try:
             assert isinstance(message, dict)
 
-            write_valid_info(message['type_sensor'], message['value'], message['timestamp'])
+            write_valid_info(message['type_sensor'],
+                             message['value'], message['timestamp'])
 
             socket.send_json({'status': 'ok'})
 
@@ -77,5 +84,10 @@ def main() -> None:
             socket.send_json({'status': 'error', 'message': str(e)})
 
 
+def main() -> None:
+    asyncio.run(run())
+
+
 if __name__ == '__main__':
+    asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
     main()

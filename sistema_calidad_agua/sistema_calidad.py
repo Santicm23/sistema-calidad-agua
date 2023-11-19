@@ -1,10 +1,13 @@
 
 import asyncio
-
+import warnings
 import zmq
 import zmq.asyncio
 
 from sistema_calidad_agua.constants import SYSTEM_SOCKET
+
+
+warnings.filterwarnings("ignore", category=RuntimeWarning, module="zmq.*")
 
 
 def print_title() -> None:
@@ -35,4 +38,5 @@ def main() -> None:
 
 
 if __name__ == '__main__':
+    asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
     main()

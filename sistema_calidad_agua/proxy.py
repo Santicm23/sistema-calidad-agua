@@ -1,12 +1,16 @@
 
 import asyncio
 import uuid
+import warnings
 
 import zmq
 import zmq.asyncio
 
 from .constants import PROXY_SOCKET
 from .helpers import health_check, auth
+
+
+warnings.filterwarnings("ignore", category=RuntimeWarning, module="zmq.*")
 
 
 def print_title() -> None:
@@ -17,12 +21,14 @@ def print_title() -> None:
     print('-------------------------------------\n')
 
 
-def main() -> None:
+async def run() -> None:
+    print_title()
+    
     _id = str(uuid.uuid4())
 
     context = zmq.asyncio.Context()
 
-    auth(context, _id, 'proxy')
+    await auth(context, _id, 'proxy')
 
     frontend_socket = context.socket(zmq.XPUB)
     frontend_socket.bind(f'tcp://*:{PROXY_SOCKET["frontend_port"]}')
@@ -30,9 +36,8 @@ def main() -> None:
     backend_socket = context.socket(zmq.XSUB)
     backend_socket.bind(f'tcp://*:{PROXY_SOCKET["backend_port"]}')
 
-    print_title()
 
-    asyncio.create_task(health_check(context))
+    asyncio.create_task(health_check(context, _id))
 
     zmq.proxy(frontend_socket, backend_socket)
 
@@ -41,5 +46,10 @@ def main() -> None:
     context.term()
 
 
+def main() -> None:
+    asyncio.run(run())
+
+
 if __name__ == '__main__':
+    asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
     main()
