@@ -19,8 +19,9 @@ warnings.filterwarnings("ignore", category=RuntimeWarning, module="zmq.*")
 
 def print_title(sensor_type: SensorType) -> None:
     print(f'----- Monitor de calidad de agua: {sensor_type.value} -----')
-    print(f'IP del sistema: {SYSTEM_SOCKET["host"]}')
-    print(f'Escuchando información del puerto: {SYSTEM_SOCKET["port"]}')
+    print(f'Escuchando información de los sensores: {PROXY_SOCKET["host"]}:{PROXY_SOCKET["frontend_port"]}')
+    print(f'Publicando información a la base de datos: {DB_SOCKET["host"]}:{DB_SOCKET["port"]}')
+    print(f'Publicando información al sistema: {SYSTEM_SOCKET["host"]}:{SYSTEM_SOCKET["port"]}')
     print('--------------------------------------\n')
 
 

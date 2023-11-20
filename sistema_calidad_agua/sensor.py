@@ -13,8 +13,7 @@ from .helpers import read_config_file, get_sensor_value
 
 def print_title(sensor_type: SensorType) -> None:
     print(f'----- Sensor de calidad de agua: {sensor_type.value} -----')
-    print(f'IP del sistema: {PROXY_SOCKET["host"]}')
-    print(f'Publicando información al puerto: {PROXY_SOCKET["backend_port"]}')
+    print(f'Publicando información a la dirección: {PROXY_SOCKET["host"]}:{PROXY_SOCKET["backend_port"]}')
     print('--------------------------------------\n')
 
 
