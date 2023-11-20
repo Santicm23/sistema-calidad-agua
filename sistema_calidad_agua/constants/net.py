@@ -20,23 +20,23 @@ HealthCheckSocket = TypedDict('HealthCheckSocket', {
 })
 
 PROXY_SOCKET: ProxySocket = {
-    'host': '10.43.101.100', # TODO: Change this to the IP of the proxy server
+    'host': '172.29.84.70', # TODO: Change this to the IP of the proxy server
     'frontend_port': 5555,
     'backend_port': 5556,
 }
 
 SYSTEM_SOCKET: Socket = {
-    'host': '10.101.137.96', # TODO: Change this to the IP of the system server
-    'port': 5557,
+    'host': '172.29.9.136', # TODO: Change this to the IP of the system server
+    'port': 5561,
 }
 
 DB_SOCKET: Socket = {
-    'host': '10.43.101.100', # TODO: Change this to the IP of the database server
+    'host': '172.29.84.70', # TODO: Change this to the IP of the database server
     'port': 5558,
 }
 
 HEALTH_CHECK_SOCKET: HealthCheckSocket = {
-    'host': '10.43.101.100', # TODO: Change this to the IP of the health check server
+    'host': '172.29.84.70', # TODO: Change this to the IP of the health check server
     'port_res': 5559,
     'port_health_check': 5560,
 }
