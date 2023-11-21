@@ -60,6 +60,7 @@ async def run() -> None:
         message = await socket_sensors.recv_multipart()
 
         value = float(message[0].decode('utf-8').split()[1])
+        timestamp = float(message[0].decode('utf-8').split()[2])
         
         # * Comunicación con la base de datos
         socket_db = context.socket(zmq.REQ)
@@ -70,7 +71,7 @@ async def run() -> None:
         socket_db.send_json({
             'type_sensor': tipo_sensor.value,
             'value': value,
-            'timestamp': time.time()
+            'timestamp': timestamp
         })
 
         res = await socket_db.recv_multipart()
@@ -83,7 +84,8 @@ async def run() -> None:
             if not is_in_range(tipo_sensor, value):
                 socket_system.send_multipart([
                     bytes(tipo_sensor.value, 'utf-8'),
-                    bytes(f'Valor fuera de rango: {value}', 'utf-8')
+                    bytes(f'Valor fuera de rango: {value}', 'utf-8'),
+                    bytes(str(timestamp), 'utf-8')
                 ])
         else:
             print(f'Error: {json_obj["message"]}')

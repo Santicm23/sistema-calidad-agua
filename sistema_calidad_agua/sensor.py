@@ -44,8 +44,8 @@ async def run() -> None:
 
     while True:
         sensor_value = get_sensor_value(SensorType(tipo_sensor), config)
-        socket.send(bytes(f'{tipo_sensor} {sensor_value}', 'utf-8'))
-        print(f'Enviando: {tipo_sensor} {sensor_value}')
+        socket.send(bytes(f'{tipo_sensor} {sensor_value} {time.time()}', 'utf-8'))
+        print(f'Enviando: {tipo_sensor} {sensor_value} {time.time()}')
         time.sleep(tiempo)
 
 

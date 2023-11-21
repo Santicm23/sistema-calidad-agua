@@ -1,4 +1,5 @@
 
+import time
 import asyncio
 import warnings
 import zmq
@@ -30,7 +31,11 @@ async def run() -> None:
         message = await socket.recv_multipart()
 
         print(f"Alerta recibida de {message[0].decode('utf-8')}")
-        print(f"Mensaje: '{message[1].decode('utf-8')}'\n")
+        print(f"Mensaje: '{message[1].decode('utf-8')}'")
+        timestamp = float(message[2].decode('utf-8'))
+        timestamp_actual = time.time()
+        tiempo = timestamp_actual - timestamp
+        print(f"Timestamp: {timestamp_actual} - {timestamp} = {tiempo}\n")
 
 
 def main() -> None:
