@@ -34,8 +34,8 @@ async def run() -> None:
         print(f"Mensaje: '{message[1].decode('utf-8')}'")
         timestamp = float(message[2].decode('utf-8'))
         timestamp_actual = time.time()
-        tiempo = timestamp_actual - timestamp
-        print(f"Timestamp: {timestamp_actual} - {timestamp} = {tiempo}\n")
+        tiempo = timestamp - timestamp_actual
+        print(f"Timestamp: {timestamp} - {timestamp_actual} = {tiempo}\n")
 
 
 def main() -> None:
